@@ -9,6 +9,8 @@ import numpy as np
 from mpl_toolkits.basemap import Basemap
 from tkinter.filedialog import askopenfilename
 from datetime import datetime
+from requests import get
+from pandas import json_normalize
 tk.Tk().withdraw()
 
 #fn = askopenfilename()
@@ -131,7 +133,8 @@ velocities = 3.6*(Distance / np.diff(time_seconds))
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
 
-
+print(lat)
+print(long)
 print(median_velo)
 print(average_velo)
 ###############
@@ -178,11 +181,63 @@ plt.clim(3, 7)
 ##################
 ### 3D-PRINTING###
 ##################
+# min, max of lat, long -> done
+# define coordinates around the trail -> rastering in a rectangle, more shapes would be interesting. Also beeing able to use points according to some landmarks like sea etc
+# api request to get elevation -> save in vector
+# points to stl 
+# 3D-print the points
 '''
+def shape(lat, long, size):
+    lat_max = np.max(lat) + size
+    lat_min = np.min(lat) - size
+    lon_max = np.max(long) + size
+    lon_min = np.min(long) - size
+  return lat_max, lat_min, lon_max, lon_min
+
+'''
+
+#own implementation, looking for libraries later#
+
+
+def coordinates(lat, lon):
+  lat_max = np.max(lat)
+  lat_min = np.min(lat)
+  lon_max = np.max(lon)
+  lon_min = np.min(lon) 
+
+  longitudenvektor, latitudenvektor = [], []  
+  for i in range(len(lat_min), len(lat_max), 0.00001):
+    latitude = i
+    latitudenvektor.append(latitude)
+
+  for j in range(len(lon_min), len(lon_max), 0.00001):
+    longitude = j
+    longitudenvektor.append(longitude)
+  return latitudenvektor, longitudenvektor
+
+          
+def getElevationfromAPI(lat, long): ## open elevation, need to look for other apis maybe
+  query = ('https://api.open-elevation.com/api/v1/lookup'
+             f'?locations={lat},{long}')
+  r = get(query, timeout = 20)
+  if r.status_code == 200 or r.status_code == 201:
+        elevation = json_normalize(r.json(), 'results')['elevation'].values[0]
+  return elevation
+
+def ElevationData(lat, long):
+   latitudenvektor, longitudenvektor = coordinates(lat, long)
+   ElevationData = []
+   for latitude in latitudenvektor:
+      for longitude in longitudenvektor:
+        Elevation = getElevationfromAPI(latitude, longitude)
+        ElevationData.append(Elevation)      
+
+'''
+
 def get_elevation(lat,lon):
     coords = ((lat,lon),(lat,lon))
     with rasterio.test
 def STL_File(lat, lon, ele):
     num_triangles = len(lat)*len(lat)
     data = np.zeroes(num_triangles, dtype=mesh.Mesh.dtype)
-    '''
+'''

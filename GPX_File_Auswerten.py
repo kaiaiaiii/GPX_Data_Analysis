@@ -48,7 +48,7 @@ tk.Tk().withdraw()
     ## 3D-Druckbar?
 
 ### Variablen Definitionen ###
-filename = "/nishome/kai/Documents/repos/privat/DataScience/GPX_Auswertungen/2025-10-10_2626219759_Tag 2 - Entscheidungsschwierigkeiten.gpx"  #askopenfilename()
+filename = "/nishome/kai/Documents/repos/privat/DataScience/GPX_Auswertungen/FileName.gpx"  #askopenfilename()
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -240,4 +240,9 @@ def get_elevation(lat,lon):
 def STL_File(lat, lon, ele):
     num_triangles = len(lat)*len(lat)
     data = np.zeroes(num_triangles, dtype=mesh.Mesh.dtype)
+<<<<<<< HEAD
 '''
+=======
+
+    '''
+>>>>>>> beff243d7ccb618709ad450435a3ac0b0f1588e7

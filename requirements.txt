@@ -13,6 +13,7 @@ lance-namespace==0.5.2
 lance-namespace-urllib3-client==0.5.2
 matplotlib==3.10.8
 numpy==2.2.6
+numpy-stl==3.2.0
 packaging==25.0
 pandas==2.3.3
 pillow==12.1.1
@@ -25,6 +26,7 @@ pyparsing==3.3.2
 pyproj==3.7.1
 pyshp==2.3.1
 python-dateutil==2.9.0.post0
+python-utils==3.9.1
 pytz==2025.2
 requests==2.32.5
 shapely==2.1.2

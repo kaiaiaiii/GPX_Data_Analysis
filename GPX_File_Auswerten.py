@@ -153,7 +153,7 @@ plt.ylabel("latitude")
 plt.title("Track")
 #plt.legend()
 plt.savefig("Track")
-#plt.show()
+plt.show()
 
 plt.figure(figsize=(8, 5))
 plt.hist(velocities, 500)
@@ -264,12 +264,21 @@ def ElevationData(lat, lon):
     return elevation_data 
 
 
-
-
 print(coordinates(lat, long))
 
-
+Coordinates_to_plot = coordinates(lat, long)
 Elevationdata = ElevationData(lat, long)
+
+plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
+plt.scatter(Coordinates_to_plot[0], Coordinates_to_plot[1], c = Elevationdata , cmap = 'viridis' )
+plt.xlabel("longitude")
+plt.ylabel("latitude")
+plt.title("Track")
+#plt.legend()
+plt.savefig("Track")
+#plt.show()
+
+
 '''
 
 def get_elevation(lat,lon):

@@ -200,43 +200,53 @@ def shape(lat, long, size):
 
 
 def coordinates(lat, lon):
-  lat_max = np.max(lat)
-  lat_min = np.min(lat)
-  lon_max = np.max(lon)
-  lon_min = np.min(lon) 
-
-  longitudenvektor, latitudenvektor = [], []  
-  for i in range(len(lat_min), len(lat_max), 0.00001):
-    latitude = i
-    latitudenvektor.append(latitude)
-
-  for j in range(len(lon_min), len(lon_max), 0.00001):
-    longitude = j
-    longitudenvektor.append(longitude)
-  return latitudenvektor, longitudenvektor
+    lat_max = np.max(lat)
+    lat_min = np.min(lat)
+    lon_max = np.max(lon)
+    lon_min = np.min(lon) 
+    it_lat_max = lat_max * 100000
+    it_lat_min = lat_min * 100000
+    it_lon_max = lon_max * 100000
+    it_lon_min = lon_min * 100000
+    longitudenvektor, latitudenvektor = [], []  
+    for i in range(int(it_lat_min), int(it_lat_max),1000):
+        latitude = i/100000
+        latitudenvektor.append(latitude)
+    for j in range(int(it_lon_min), int(it_lon_max),1000):
+      longitude = j/100000
+      longitudenvektor.append(longitude)
+    return latitudenvektor, longitudenvektor
 
           
 def getElevationfromAPI(lat, long): ## open elevation, need to look for other apis maybe
-  query = ('https://api.open-elevation.com/api/v1/lookup'
-             f'?locations={lat},{long}')
-  r = get(query, timeout = 20)
-  if r.status_code == 200 or r.status_code == 201:
-        elevation = json_normalize(r.json(), 'results')['elevation'].values[0]
-  return elevation
+    query = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{long}"
+    r = get(query, timeout = 20)
+    if r.status_code in (200, 201):
+            elevation = pd.json_normalize(
+                r.json(), 'results'
+            )['elevation'].values[0]
+    return elevation
 
-def ElevationData(lat, long):
-  latitudenvektor, longitudenvektor = coordinates(lat, long)
-  ElevationData = []
-  for latitude in latitudenvektor:
-      for longitude in longitudenvektor:
-        Elevation = getElevationfromAPI(latitude, longitude)
-        ElevationData.append(Elevation)  
-  return ElevationData    
+def ElevationData(lat, lon):
+    print("Elevationdata")
+    latitudenvektor, longitudenvektor = coordinates(lat, lon)
+
+    elevation_data = []
+
+    for latitude in latitudenvektor:
+        for longitude in longitudenvektor:
+            elevation = getElevationfromAPI(latitude, longitude)
+            elevation_data.append(elevation)
+
+    return elevation_data 
 
 
-print(ElevationData)
 
 
+print(coordinates(lat, long))
+
+
+Elevationdata = ElevationData(lat, long)
 '''
 
 def get_elevation(lat,lon):

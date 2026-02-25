@@ -48,7 +48,7 @@ tk.Tk().withdraw()
     ## 3D-Druckbar?
 
 ### Variablen Definitionen ###
-filename = "/nishome/kai/Documents/repos/privat/DataScience/GPX_Auswertungen/FileName.gpx"  #askopenfilename()
+filename = "/nishome/kai/Documents/repos/privat/GPX_Data_Analysis/FileName.gpx"  #askopenfilename()
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -133,10 +133,10 @@ velocities = 3.6*(Distance / np.diff(time_seconds))
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
 
-print(lat)
-print(long)
-print(median_velo)
-print(average_velo)
+#print(lat)
+#print(long)
+#print(median_velo)
+#print(average_velo)
 ###############
 ### plotten ###
 ###############
@@ -225,12 +225,17 @@ def getElevationfromAPI(lat, long): ## open elevation, need to look for other ap
   return elevation
 
 def ElevationData(lat, long):
-   latitudenvektor, longitudenvektor = coordinates(lat, long)
-   ElevationData = []
-   for latitude in latitudenvektor:
+  latitudenvektor, longitudenvektor = coordinates(lat, long)
+  ElevationData = []
+  for latitude in latitudenvektor:
       for longitude in longitudenvektor:
         Elevation = getElevationfromAPI(latitude, longitude)
-        ElevationData.append(Elevation)      
+        ElevationData.append(Elevation)  
+  return ElevationData    
+
+
+print(ElevationData)
+
 
 '''
 
@@ -240,9 +245,5 @@ def get_elevation(lat,lon):
 def STL_File(lat, lon, ele):
     num_triangles = len(lat)*len(lat)
     data = np.zeroes(num_triangles, dtype=mesh.Mesh.dtype)
-<<<<<<< HEAD
 '''
-=======
 
-    '''
->>>>>>> beff243d7ccb618709ad450435a3ac0b0f1588e7

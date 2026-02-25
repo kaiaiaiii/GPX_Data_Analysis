@@ -245,7 +245,7 @@ def getElevationfromAPI(lat, long): ## open elevation, need to look for other ap
     query = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{long}"
     r = get(query, timeout = 20)
     if r.status_code in (200, 201):
-            elevation = pd.json_normalize(
+            elevation = pandas.json_normalize(
                 r.json(), 'results'
             )['elevation'].values[0]
     return elevation

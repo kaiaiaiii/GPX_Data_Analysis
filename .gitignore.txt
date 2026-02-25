@@ -1,4 +1,5 @@
 .venv
 .venvwin
+*.*
 *.png
 *.gpx

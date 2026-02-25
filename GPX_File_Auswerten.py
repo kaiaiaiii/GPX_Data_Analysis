@@ -23,13 +23,13 @@ tk.Tk().withdraw() ##??
     ## trittfrequenz bei gegebener Uebersetzung -> Tacho wird gebraucht
     ## Errechnete Leistung 
 
-### Variablen Definitionen ###
+### Variable definition ###
 filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
 
-### Pattern Matching
+### Patterns to match 
 pattern_longitude = r'lon="(\d+\.?\d*)'
 pattern_latitude = r'lat="(\d+\.?\d*)'
 pattern_elevation = r'<ele>(\d+\.?\d*)'
@@ -42,18 +42,8 @@ with open(filename, 'r') as file:
         elevation.extend(re.findall(pattern_elevation, line))
         time.extend(re.findall(pattern_time, line))
 
-
-ele = list(map(float, elevation))
-lat = list(map(float, latitude))
-long = list(map(float, longitude))
-
-time_seconds = np.array([
-    datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp()
-    for t in time
-])
-
 ### Funktionen ###
-def plotDataPoints(x, y, color, Name, xlabel, ylabel):
+def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
     plt.figure(figsize=(8, 5))
     plt.plot(np.asarray(x, float), y, color=color, label=Name)
     plt.xlabel(xlabel)
@@ -64,7 +54,7 @@ def plotDataPoints(x, y, color, Name, xlabel, ylabel):
     plt.show()
     plt.close()
 
-def Leistung_Geschaetzt(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
+def estimated_Performance(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
     my_r =0.00404 ## Leifiphysik schaetzung
     rho = 1.2
     cwA = 0.28 
@@ -94,9 +84,63 @@ def distance(lat, lon, ele):
     d = R * c
     return np.sqrt(d*d + dele*dele)
 
+def get_elevation_from_Api_post(lat, lon):
+    print("Elevationdata")
+
+    lat_max = np.max(lat)
+    lat_min = np.min(lat)
+    lon_max = np.max(lon)
+    lon_min = np.min(lon) 
+    longitudenvektor = np.linspace(lon_min, lon_max, 10)
+    latitudenvektor = np.linspace(lat_min, lat_max, 10)
+
+    elevation_data = []
+    lats_and_lons = []
+
+    for latitude in latitudenvektor:
+        for longitude in longitudenvektor:
+            lats_and_lons.append((latitude, longitude))
+
+    lats_and_lons_list = lats_and_lons
+    for idx, lat_lon in enumerate(lats_and_lons):
+        lats_and_lons_list[idx] ={
+            "latitude": lat_lon[0],
+            "longitude": lat_lon[1]
+        }
+
+    payload = {
+    "locations":
+    lats_and_lons_list
+    }
+
+    headers = {'Accept': 'application/json','Content-Type': 'application/json'}
+    query = f"https://api.open-elevation.com/api/v1/lookup"
+    response = post(url=query, json=payload, headers=headers)
+
+
+    result = response.json()
+
+    print(f"Full response: {response}")
+
+
+    for entry in result['results']:
+        elevation_data.append(entry['elevation'])
+
+    return elevation_data
+
 ####################
 ### AUSWERTUNGEN ###
 ####################
+
+ele = list(map(float, elevation))
+lat = list(map(float, latitude))
+long = list(map(float, longitude))
+
+time_seconds = np.array([
+    datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp()
+    for t in time
+])
+
 delta_t = np.diff(time_seconds)
 Distance = distance(lat, long, ele)
 velocities = 3.6*(Distance / np.diff(time_seconds))
@@ -108,8 +152,8 @@ average_velo = np.average(velocities)
 ### plotten ###
 ###############
 
-plotDataPoints(time_seconds, ele, "red", "Elevation", "Zeit", "Elevation")
-plotDataPoints(time_seconds[:-1], np.diff(ele), "green", "slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
+plot_Data_Points(time_seconds, ele, "red", "Elevation", "Zeit", "Elevation")
+plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 plt.scatter(long, lat, c = ele, cmap = 'viridis' )
@@ -159,52 +203,7 @@ plt.close()
 # 3D-print the points -> TODO
 #own implementation, looking for libraries later#
 
-def get_elevation_from_Api_post(lat, lon):
-    print("Elevationdata")
-
-    lat_max = np.max(lat)
-    lat_min = np.min(lat)
-    lon_max = np.max(lon)
-    lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 10)
-    latitudenvektor = np.linspace(lat_min, lat_max, 10)
-
-    elevation_data = []
-    lats_and_lons = []
-
-    for latitude in latitudenvektor:
-        for longitude in longitudenvektor:
-            lats_and_lons.append((latitude, longitude))
-
-    lats_and_lons_list = lats_and_lons
-    for idx, lat_lon in enumerate(lats_and_lons):
-        lats_and_lons_list[idx] ={
-            "latitude": lat_lon[0],
-            "longitude": lat_lon[1]
-        }
-
-    payload = {
-    "locations":
-    lats_and_lons_list
-    }
-
-    headers = {'Accept': 'application/json','Content-Type': 'application/json'}
-    query = f"https://api.open-elevation.com/api/v1/lookup"
-    response = post(url=query, json=payload, headers=headers)
-
-
-    result = response.json()
-
-    print(f"Full response: {response}")
-
-
-    for entry in result['results']:
-        elevation_data.append(entry['elevation'])
-
-    return elevation_data
-
 Data_to_plot = get_elevation_from_Api_post(lat, long) ## maybe have lat, long, ele separated
-#Elevationdata = get_elevation_from_Api_post(lat, long)
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 plt.scatter(Data_to_plot[0], Data_to_plot[1], c = Data_to_plot[2] , cmap = 'viridis' )

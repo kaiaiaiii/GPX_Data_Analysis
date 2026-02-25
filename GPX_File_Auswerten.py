@@ -155,7 +155,11 @@ average_velo = np.average(velocities)
 plot_Data_Points(time_seconds, ele, "red", "Elevation", "Zeit", "Elevation")
 plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
 
-plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
+###################################################
+### plot map with track and elevation colorcode ###
+###################################################
+
+plt.figure(figsize=(8, 5))                  # TODO: Automatic width and height
 plt.scatter(long, lat, c = ele, cmap = 'viridis' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
@@ -164,6 +168,10 @@ plt.legend()
 plt.savefig("Track")
 plt.show()
 plt.close()
+
+###############################
+### Histogram of velocities ###
+###############################
 
 plt.figure(figsize=(8, 5))
 plt.hist(velocities, 500)
@@ -175,6 +183,10 @@ plt.savefig("Histogram")
 plt.show()
 plt.close()
 
+
+#########################
+### plot track in map ###
+#########################
 ### das velocities lang genug ist, aber etwas pfuschig
 velocities = np.append(velocities, velocities[-1])
 fig = plt.figure(figsize=(8, 8))
@@ -189,7 +201,7 @@ ax.add_feature(cfeature.STATES, edgecolor='gray')
 sc = ax.scatter(long, lat, c=ele, s=ele, cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
 cbar = plt.colorbar(sc, label=r'$Velocity$')
 sc.set_clim(3, 7)
-plt.savefig("Veloc")
+plt.savefig("Velocity")
 plt.show()
 plt.close()
 

@@ -68,9 +68,10 @@ def plotDataPoints(x, y, color, Name, xlabel, ylabel):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(Name)
-    #plt.legend()
+    plt.legend()
     plt.savefig(Name + xlabel + ylabel)
-    #plt.show()
+    plt.show()
+    plt.close()
 
 def Leistung_Geschaetzt(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
     my_r =0.00404 ## Leifiphysik schaetzung
@@ -129,20 +130,20 @@ plt.scatter(long, lat, c = ele, cmap = 'viridis' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
-#plt.legend()
+plt.legend()
 plt.savefig("Track")
 plt.show()
+plt.close()
 
 plt.figure(figsize=(8, 5))
 plt.hist(velocities, 500)
 plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
-plt.xlim([0, 60])
-#plt.legend()
+plt.xlim([0, 60])#plt.legend()
 plt.savefig("Histogram")
-#plt.show()
-
+plt.show()
+plt.close()
 ''' Abhaengig von umgebung
 ax = plt.axes(projection=cimgt.OSM().crs)
 ax.set_extent([np.min(long), np.max(long), np.min(lat), np.max(lat)])
@@ -177,7 +178,7 @@ cbar = plt.colorbar(sc, label=r'$Velocity$')
 sc.set_clim(3, 7)
 plt.savefig("Veloc")
 plt.show()
-
+plt.close()
 
 ##################
 ### 3D-PRINTING###
@@ -293,17 +294,7 @@ plt.scatter(Coordinates_to_plot[0], Coordinates_to_plot[1], c = ElevationData , 
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
-#plt.legend()
+plt.legend()
 plt.savefig("Track")
-#plt.show()
-
-'''
-
-def get_elevation(lat,lon):
-    coords = ((lat,lon),(lat,lon))
-    with rasterio.test
-def STL_File(lat, lon, ele):
-    num_triangles = len(lat)*len(lat)
-    data = np.zeroes(num_triangles, dtype=mesh.Mesh.dtype)
-'''
-
+plt.show()
+plt.close()

@@ -6,7 +6,8 @@ import math
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 import numpy as np
-from mpl_toolkits.basemap import Basemap
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 from tkinter.filedialog import askopenfilename
 from datetime import datetime
 from requests import get
@@ -48,7 +49,7 @@ tk.Tk().withdraw()
     ## 3D-Druckbar?
 
 ### Variablen Definitionen ###
-filename = "/nishome/kai/Documents/repos/privat/GPX_Data_Analysis/FileName.gpx"  #askopenfilename()
+filename = "/home/kai/repos/GPX_Data_Analysis/FileName.gpx" #askopenfilename()
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -89,8 +90,9 @@ def plotDataPoints(x, y, color, Name, xlabel, ylabel):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(Name)
-    plt.legend()
-    plt.show()
+    #plt.legend()
+    plt.savefig(Name + xlabel + ylabel)
+    #plt.show()
 
 def Leistung_Geschaetzt(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
     my_r =0.00404 ## Leifiphysik schaetzung
@@ -149,8 +151,9 @@ plt.scatter(long, lat, c = ele, cmap = 'viridis' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
-plt.legend()
-plt.show()
+#plt.legend()
+plt.savefig("Track")
+#plt.show()
 
 plt.figure(figsize=(8, 5))
 plt.hist(velocities, 500)
@@ -158,16 +161,17 @@ plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
 plt.xlim([0, 60])
-plt.legend()
-plt.show()
+#plt.legend()
+plt.savefig("Histogram")
+#plt.show()
 
 ''' Abhaengig von umgebung
 ax = plt.axes(projection=cimgt.OSM().crs)
 ax.set_extent([np.min(long), np.max(long), np.min(lat), np.max(lat)])
 ax.add_image(cimgt.OSM(), 3)
 plt.scatter(long, lat, transform=ccrs.PlateCarree())
-'''
 
+leider depreceated:
 fig = plt.figure(figsize=(8, 8))
 m = Basemap(projection='lcc', resolution='f', lat_0=np.average(lat), lon_0=np.average(long), width= 1E5, height=1.2E5) # TODO: Better resolution, automatic with and height
 m.shadedrelief()
@@ -177,6 +181,25 @@ m.drawstates(color='gray')
 m.scatter(long, lat, latlon=True, c=ele, s=velocities, cmap='viridis', alpha=0.5)
 plt.colorbar(label=r'$Velocity$')
 plt.clim(3, 7)
+'''
+
+### das velocities lang genug ist, aber etwas pfuschig
+velocities = np.append(velocities, velocities[-1])
+fig = plt.figure(figsize=(8, 8))
+proj = ccrs.LambertConformal(central_latitude=np.average(lat),central_longitude=np.average(long))
+ax = plt.axes(projection=proj)
+extent = [np.min(long), np.max(long),np.min(lat), np.max(lat)]
+ax.set_extent(extent, crs=ccrs.PlateCarree())
+ax.stock_img()
+ax.add_feature(cfeature.COASTLINE, edgecolor='gray')
+ax.add_feature(cfeature.BORDERS, edgecolor='gray')
+ax.add_feature(cfeature.STATES, edgecolor='gray')
+sc = ax.scatter(long, lat, c=ele, s=velocities, cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
+cbar = plt.colorbar(sc, label=r'$Velocity$')
+sc.set_clim(3, 7)
+plt.savefig("Veloc")
+plt.show()
+
 
 ##################
 ### 3D-PRINTING###

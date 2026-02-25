@@ -15,31 +15,9 @@ from pandas import json_normalize
 tk.Tk().withdraw()
 
 #fn = askopenfilename()
-'''
-<?xml version='1.0' encoding='UTF-8'?>
-<gpx version="1.1" creator="https://www.komoot.de" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-  <metadata>
-    <name>Sonntagsausfahrt</name>
-    <author>
-      <link href="https://www.komoot.de">
-        <text>komoot</text>
-        <type>text/html</type>
-      </link>
-    </author>
-  </metadata>
-  <trk>
-    <name>Sonntagsausfahrt</name>
-    <trkseg>
-      <trkpt lat="50.585320" lon="18.018161">
-        <ele>336.461315</ele>
-        <time>2025-06-15T06:27:21.112Z</time>
-      </trkpt>
-      <trkpt lat="50.585558" lon="18.018229">
-        <ele>336.461315</ele>
-        <time>2025-06-15T06:29:36.120Z</time>
-      </trkpt>
-'''
 
+## TODO:
+## Namingconvention, Iteration x,y gleichgross
 ##Ziele:
     ## Histogram geschwindigkeit -> done
     ## Heatmap geschwindigkeit -> done
@@ -49,7 +27,7 @@ tk.Tk().withdraw()
     ## 3D-Druckbar?
 
 ### Variablen Definitionen ###
-filename = "/home/kai/repos/GPX_Data_Analysis/FileName.gpx" #askopenfilename()
+filename = "/home/kai/repos/GPX_Data_Analysis/FileName.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -194,7 +172,7 @@ ax.stock_img()
 ax.add_feature(cfeature.COASTLINE, edgecolor='gray')
 ax.add_feature(cfeature.BORDERS, edgecolor='gray')
 ax.add_feature(cfeature.STATES, edgecolor='gray')
-sc = ax.scatter(long, lat, c=ele, s=velocities, cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
+sc = ax.scatter(long, lat, c=ele, s=ele, cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
 cbar = plt.colorbar(sc, label=r'$Velocity$')
 sc.set_clim(3, 7)
 plt.savefig("Veloc")
@@ -264,20 +242,60 @@ def ElevationData(lat, lon):
     return elevation_data 
 
 
-print(coordinates(lat, long))
+def get_elevation_from_Api_post(lat, lon):
+    print("Elevationdata")
+
+    latitudenvektor, longitudenvektor = coordinates(lat, lon)
+
+    elevation_data = []
+
+    lats_and_lons = []
+
+    for latitude in latitudenvektor:
+        for longitude in longitudenvektor:
+            # elevation = getElevationfromAPI(latitude, longitude)
+            # elevation_data.append(elevation)
+
+            lats_and_lons.append((latitude, longitude))
+
+    lats_and_lons_list = lats_and_lons
+    for idx, lat_lon in enumerate(lats_and_lons):
+        lats_and_lons_list[idx] ={
+            "latitude": lat_lon[0],
+            "longitude": lat_lon[1]
+        }
+
+    payload = {
+    "locations":
+    lats_and_lons_list
+}
+
+    headers = {'Accept': 'application/json','Content-Type': 'application/json'}
+    query = f"https://api.open-elevation.com/api/v1/lookup"
+    response = post(url=query, json=payload, headers=headers)
+
+
+    result = response.json()
+
+    print(f"Full response: {response}")
+
+
+    for entry in result['results']:
+        elevation_data.append(entry['elevation'])
+
+    return elevation_data
 
 Coordinates_to_plot = coordinates(lat, long)
 Elevationdata = ElevationData(lat, long)
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
-plt.scatter(Coordinates_to_plot[0], Coordinates_to_plot[1], c = Elevationdata , cmap = 'viridis' )
+plt.scatter(Coordinates_to_plot[0], Coordinates_to_plot[1], c = ElevationData , cmap = 'viridis' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
 #plt.legend()
 plt.savefig("Track")
 #plt.show()
-
 
 '''
 

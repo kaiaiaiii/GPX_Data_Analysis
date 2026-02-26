@@ -2,11 +2,12 @@ from results import plotGPXdata.py
 from STLgenerator import STLgenerator.py
 from tkinter.filedialog import askopenfilename
 import numpy as np
+import math
 
 filename = "./gpxfiles/Beten.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
-Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
-velocity = []
+ressistance_rolling, ressistance_air, power_elevation = [],[],[]
+
 
 ### Patterns to match 
 pattern_longitude = r'lon="(\d+\.?\d*)'
@@ -22,30 +23,19 @@ with open(filename, 'r') as file:
         time.extend(re.findall(pattern_time, line))
 
 ### Function definition ###
-def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
-    plt.figure(figsize=(8, 5))
-    plt.plot(np.asarray(x, float), y, color=color, label=Name)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(Name)
-    plt.legend()
-    plt.savefig(Name + xlabel + ylabel)
-    plt.show()
-    plt.close()
-
 def estimated_Performance(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
     my_r =0.00404 ## Leifiphysik schaetzung
     rho = 1.2
     cwA = 0.28 
-    P_Rolle = Gewicht*9,81*Geschwindigkeit*my_r
-    Leistung_Rollwiderstand.append(P_Rolle)
-    P_Luft = 0.5*rho*cwA*Geschwindigkeit*Geschwindigkeit
-    Leistung_Luftwiderstand.append(P_Luft)
+    P_roll = Gewicht*9,81*Geschwindigkeit*my_r
+    ressistance_rolling.append(P_roll)
+    P_air = 0.5*rho*cwA*Geschwindigkeit*Geschwindigkeit
+    ressistance_air.append(P_air)
     k = Hoehe2-Hoehe1
-    P_Steigung = (k*Geschwindigkeit)/(math.sqrt(1+k*k))
-    Leistung_Steigung.append(P_Steigung)
-    Leistung = Leistung_Luftwiderstand + Leistung_Rollwiderstand + Leistung_Steigung
-    return Leistung  
+    P_slope = (k*Geschwindigkeit)/(math.sqrt(1+k*k))
+    power_elevation.append(P_slope)
+    Power = ressistance_rolling + ressistance_air + power_elevation
+    return Power  
 
 def distance(lat, lon, ele):
     R = 6378137
@@ -123,7 +113,7 @@ time_seconds = np.array([
 delta_t = np.diff(time_seconds)
 Distance = distance(lat, long, ele)
 velocities = 3.6*(Distance / np.diff(time_seconds))
-#Leistungen = Leistung_Geschaetzt(100, elevation)  ->> TODO
+#Power = estimated_Performance(100, elevation)  ->> TODO
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
 maximum_velo = np.max(velocities)

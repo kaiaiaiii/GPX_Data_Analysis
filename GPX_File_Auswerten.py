@@ -91,8 +91,8 @@ def get_elevation_from_Api_post(lat, lon):
     lat_min = np.min(lat)
     lon_max = np.max(lon)
     lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 10)
-    latitudenvektor = np.linspace(lat_min, lat_max, 10)
+    longitudenvektor = np.linspace(lon_min, lon_max, 100)
+    latitudenvektor = np.linspace(lat_min, lat_max, 100)
 
     elevation_data = []
     lats_and_lons = []
@@ -159,12 +159,11 @@ plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "slope", "Zeit", "Tes
 ### plot map with track and elevation colorcode ###
 ###################################################
 
-plt.figure(figsize=(8, 5))                  # TODO: Automatic width and height
-plt.scatter(long, lat, c = ele, cmap = 'viridis' )
+plt.figure(constrained_layout=True)
+plt.scatter(long, lat, c = ele, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
-plt.legend()
 plt.savefig("Track")
 plt.show()
 plt.close()
@@ -188,6 +187,7 @@ plt.close()
 ### plot track in map ###
 #########################
 ### das velocities lang genug ist, aber etwas pfuschig
+
 velocities = np.append(velocities, velocities[-1])
 fig = plt.figure(figsize=(8, 8))
 proj = ccrs.LambertConformal(central_latitude=np.average(lat),central_longitude=np.average(long))
@@ -198,12 +198,13 @@ ax.stock_img()
 ax.add_feature(cfeature.COASTLINE, edgecolor='gray')
 ax.add_feature(cfeature.BORDERS, edgecolor='gray')
 ax.add_feature(cfeature.STATES, edgecolor='gray')
-sc = ax.scatter(long, lat, c=ele, s=ele, cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
+sc = ax.scatter(long, lat, c=velocities,  cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
+sc.set_clim(0, 60)
 cbar = plt.colorbar(sc, label=r'$Velocity$')
-sc.set_clim(3, 7)
 plt.savefig("Velocity")
 plt.show()
 plt.close()
+print(np.min(velocities), np.max(velocities))
 
 ##################
 ### 3D-PRINTING###
@@ -215,71 +216,16 @@ plt.close()
 # 3D-print the points -> TODO
 #own implementation, looking for libraries later#
 
-Data_to_plot = get_elevation_from_Api_post(lat, long) ## maybe have lat, long, ele separated
-
+Data_to_plot = get_elevation_from_Api_post(lat, long) 
+lon_grid, lat_grid = np.meshgrid(Data_to_plot[0], Data_to_plot[1])
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
-plt.scatter(Data_to_plot[0], Data_to_plot[1], c = Data_to_plot[2] , cmap = 'viridis' )
+plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'viridis' )
+plt.scatter(long, lat, c = ele, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
-plt.title("Track")
-plt.legend()
-plt.savefig("Track")
+plt.title("Height Profile")
+#plt.legend()
+plt.savefig("Height Profile")
 plt.show()
 plt.close()
 
-
-'''
-        ### extend to values
-        longitude.extend(match_lon)
-        latitude.extend(match_lat)
-        elevation.extend(match_ele)
-        time.extend(match_time)
-Abhaengig von umgebung
-ax = plt.axes(projection=cimgt.OSM().crs)
-ax.set_extent([np.min(long), np.max(long), np.min(lat), np.max(lat)])
-ax.add_image(cimgt.OSM(), 3)
-plt.scatter(long, lat, transform=ccrs.PlateCarree())
-
-leider depreceated:
-fig = plt.figure(figsize=(8, 8))
-m = Basemap(projection='lcc', resolution='f', lat_0=np.average(lat), lon_0=np.average(long), width= 1E5, height=1.2E5) # TODO: Better resolution, automatic with and height
-m.shadedrelief()
-m.drawcoastlines(color='gray')
-m.drawcountries(color='gray')
-m.drawstates(color='gray')
-m.scatter(long, lat, latlon=True, c=ele, s=velocities, cmap='viridis', alpha=0.5)
-plt.colorbar(label=r'$Velocity$')
-plt.clim(3, 7)
-def shape(lat, long, size):
-    lat_max = np.max(lat) + size
-    lat_min = np.min(lat) - size
-    lon_max = np.max(long) + size
-    lon_min = np.min(long) - size
-  return lat_max, lat_min, lon_max, lon_min
-
-
-
-def ElevationData(lat, lon):
-    print("Elevationdata")
-    latitudenvektor, longitudenvektor = coordinates(lat, lon)
-
-    elevation_data = []
-
-    for latitude in latitudenvektor:
-        for longitude in longitudenvektor:
-            elevation = getElevationfromAPI(latitude, longitude)
-            elevation_data.append(elevation)
-
-    return elevation_data 
-
-def getElevationfromAPI(lat, long): ## open elevation, need to look for other apis maybe
-    query = f"https://api.open-elevation.com/api/v1/lookup?locations={lat},{long}"
-    r = get(query, timeout = 20)
-    if r.status_code in (200, 201):
-            elevation = pd.json_normalize(
-                r.json(), 'results'
-            )['elevation'].values[0]
-    return elevation
-
-
-'''

@@ -9,3 +9,4 @@ Beten.gpx
 Franken.gpx
 DK.gpx
 Walberla.gpx
+:Zone.Identifier

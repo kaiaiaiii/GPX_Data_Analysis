@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
     plt.figure(figsize=(8, 5))

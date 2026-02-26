@@ -9,7 +9,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from tkinter.filedialog import askopenfilename
 from datetime import datetime
-from requests import get
+from requests import post
 import pandas as pd
 from pandas import json_normalize
 tk.Tk().withdraw() ##??
@@ -126,7 +126,7 @@ def get_elevation_from_Api_post(lat, lon):
     for entry in result['results']:
         elevation_data.append(entry['elevation'])
 
-    return elevation_data
+    return longitudenvektor, latitudenvektor, elevation_data
 
 ####################
 ### AUSWERTUNGEN ###
@@ -280,5 +280,6 @@ def getElevationfromAPI(lat, long): ## open elevation, need to look for other ap
                 r.json(), 'results'
             )['elevation'].values[0]
     return elevation
+
 
 '''

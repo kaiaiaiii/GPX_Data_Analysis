@@ -87,6 +87,8 @@ def distance(lat, lon, ele):
 
 def get_elevation_from_Api_post(lat, lon):
     print("Elevationdata")
+    
+    max_payload_size = 100*100 # number of points per request
 
     lat_max = np.max(lat)
     lat_min = np.min(lat)
@@ -108,24 +110,26 @@ def get_elevation_from_Api_post(lat, lon):
             "latitude": lat_lon[0],
             "longitude": lat_lon[1]
         }
+        
+    for idx in range(0, len(lats_and_lons_list), max_payload_size):
+        batch = lats_and_lons_list[idx:idx + max_payload_size]
 
-    payload = {
-    "locations":
-    lats_and_lons_list
-    }
+        payload = {
+        "locations":
+        batch
+        }
 
-    headers = {'Accept': 'application/json','Content-Type': 'application/json'}
-    query = f"https://api.open-elevation.com/api/v1/lookup"
-    response = post(url=query, json=payload, headers=headers)
-
-
-    result = response.json()
-
-    print(f"Full response: {response}")
+        query = f"https://api.open-elevation.com/api/v1/lookup"
+        response = post(url=query, json=payload)
 
 
-    for entry in result['results']:
-        elevation_data.append(entry['elevation'])
+        result = response.json()
+
+        print(f"Full response: {response}")
+
+
+        for entry in result['results']:
+            elevation_data.append(entry['elevation'])
 
     return longitudenvektor, latitudenvektor, elevation_data
 

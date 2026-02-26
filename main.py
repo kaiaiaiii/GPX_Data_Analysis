@@ -1,6 +1,8 @@
 from results import plotGPXdata.py
 from STLgenerator import STLgenerator.py
-from GPX
+from tkinter.filedialog import askopenfilename
+import numpy as np
+
 filename = "./gpxfiles/Beten.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]

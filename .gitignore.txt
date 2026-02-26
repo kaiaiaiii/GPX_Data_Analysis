@@ -4,3 +4,8 @@
 *.png
 *.gpx
 *.stl
+Greece.gpx
+Beten.gpx
+Franken.gpx
+DK.gpx
+Walberla.gpx

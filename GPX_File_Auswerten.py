@@ -5,6 +5,7 @@ import math
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 import numpy as np
+import pyvista 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from tkinter.filedialog import askopenfilename
@@ -12,7 +13,7 @@ from datetime import datetime
 from requests import post
 import pandas as pd
 from pandas import json_normalize
-tk.Tk().withdraw() ##??
+
 
 ## TODO:
 ## Namingconvention, Iteration x,y gleichgross
@@ -42,7 +43,7 @@ with open(filename, 'r') as file:
         elevation.extend(re.findall(pattern_elevation, line))
         time.extend(re.findall(pattern_time, line))
 
-### Funktionen ###
+### Function definition ###
 def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
     plt.figure(figsize=(8, 5))
     plt.plot(np.asarray(x, float), y, color=color, label=Name)
@@ -128,9 +129,9 @@ def get_elevation_from_Api_post(lat, lon):
 
     return longitudenvektor, latitudenvektor, elevation_data
 
-####################
-### AUSWERTUNGEN ###
-####################
+################
+### ANALYSIS ###
+################
 
 ele = list(map(float, elevation))
 lat = list(map(float, latitude))
@@ -147,6 +148,24 @@ velocities = 3.6*(Distance / np.diff(time_seconds))
 #Leistungen = Leistung_Geschaetzt(100, elevation)  ->> TODO
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
+
+##################
+### 3D-PRINTING###
+##################
+# define coordinates around the trail -> rastering in a rectangle, more shapes would be interesting. Also beeing able to use points according to some landmarks like sea etc
+# points to stl -> TODO
+# 3D-print the points -> TODO
+#own implementation, looking for libraries later
+
+def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
+    lon_flat = lon.flatten()
+    lat_flat = lat.flatten()
+    ele_flat = np.array(ele)
+    arraydata = np.column_stack((lon_flat, lat_flat, ele_flat))
+    pointcloud = pyvista.PolyData(arraydata)
+    mesh = pointcloud.reconstruct_surface()
+    mesh.save("mesh.stl")
+
 
 ###############
 ### plotten ###
@@ -182,12 +201,9 @@ plt.savefig("Histogram")
 plt.show()
 plt.close()
 
-
 #########################
 ### plot track in map ###
 #########################
-### das velocities lang genug ist, aber etwas pfuschig
-
 velocities = np.append(velocities, velocities[-1])
 fig = plt.figure(figsize=(8, 8))
 proj = ccrs.LambertConformal(central_latitude=np.average(lat),central_longitude=np.average(long))
@@ -204,28 +220,23 @@ cbar = plt.colorbar(sc, label=r'$Velocity$')
 plt.savefig("Velocity")
 plt.show()
 plt.close()
-print(np.min(velocities), np.max(velocities))
 
-##################
-### 3D-PRINTING###
-##################
-# min, max of lat, long -> done
-# define coordinates around the trail -> rastering in a rectangle, more shapes would be interesting. Also beeing able to use points according to some landmarks like sea etc
-# api request to get elevation -> save in vector done
-# points to stl -> TODO
-# 3D-print the points -> TODO
-#own implementation, looking for libraries later#
+##############################################################
+### plot track in map colorcode for elevation and velocity ###
+##############################################################
 
 Data_to_plot = get_elevation_from_Api_post(lat, long) 
 lon_grid, lat_grid = np.meshgrid(Data_to_plot[0], Data_to_plot[1])
+Meshing(lon_grid, lat_grid, Data_to_plot[2])
+
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'viridis' )
 plt.scatter(long, lat, c = ele, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Height Profile")
-#plt.legend()
 plt.savefig("Height Profile")
 plt.show()
 plt.close()
+
 

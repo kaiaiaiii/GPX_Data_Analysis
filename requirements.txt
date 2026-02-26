@@ -29,7 +29,7 @@ python-dateutil==2.9.0.post0
 python-utils==3.9.1
 pytz==2025.2
 requests==2.32.5
-shapely==2.1.2
+shapely==2.1.2s
 six==1.17.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0

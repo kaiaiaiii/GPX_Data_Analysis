@@ -25,7 +25,7 @@ from pandas import json_normalize
     ## Errechnete Leistung 
 
 ### Variable definition ###
-filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./gpxfiles/Greece.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -164,26 +164,27 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     arraydata = np.column_stack((lon_flat, lat_flat, ele_flat))
     pointcloud = pyvista.PolyData(arraydata)
     mesh = pointcloud.reconstruct_surface()
-    mesh.save("mesh.stl")
+    mesh.save("exports/mesh.stl")
 
 
 ###############
 ### plotten ###
 ###############
 
-plot_Data_Points(time_seconds, ele, "red", "Elevation", "Zeit", "Elevation")
-plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
+plot_Data_Points(time_seconds, ele, "red", "exports/Elevation", "Zeit", "Elevation")
+plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "exports/slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
 
 ###################################################
 ### plot map with track and elevation colorcode ###
 ###################################################
 
 plt.figure(constrained_layout=True)
-plt.scatter(long, lat, c = ele, cmap = 'hot' )
+ax = plt.scatter(long, lat, c = ele, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
-plt.savefig("Track")
+plt.colorbar(ax, label=r'$Elevation$')
+plt.savefig("exports/Track")
 plt.show()
 plt.close()
 
@@ -197,7 +198,7 @@ plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
 plt.xlim([0, 60])#plt.legend()
-plt.savefig("Histogram")
+plt.savefig("exports/Histogram")
 plt.show()
 plt.close()
 
@@ -217,7 +218,7 @@ ax.add_feature(cfeature.STATES, edgecolor='gray')
 sc = ax.scatter(long, lat, c=velocities,  cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
 sc.set_clim(0, 60)
 cbar = plt.colorbar(sc, label=r'$Velocity$')
-plt.savefig("Velocity")
+plt.savefig("exports/Velocity")
 plt.show()
 plt.close()
 
@@ -230,12 +231,12 @@ lon_grid, lat_grid = np.meshgrid(Data_to_plot[0], Data_to_plot[1])
 Meshing(lon_grid, lat_grid, Data_to_plot[2])
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
-plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'viridis' )
+plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'rainbow' )
 plt.scatter(long, lat, c = ele, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Height Profile")
-plt.savefig("Height Profile")
+plt.savefig("exports/Height Profile")
 plt.show()
 plt.close()
 

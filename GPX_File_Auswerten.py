@@ -177,7 +177,7 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     mesh = pointcloud.reconstruct_surface()
     mesh.save("exports/mesh.stl")
 
-
+'''
 ###############
 ### plotten ###
 ###############
@@ -253,5 +253,4 @@ plt.savefig("exports/Height Profile")
 plt.show()
 plt.close()
 
-##Test###
-
+'''

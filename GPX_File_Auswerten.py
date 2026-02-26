@@ -16,7 +16,7 @@ from pandas import json_normalize
 
 
 ## TODO:
-## Namingconvention, Iteration x,y gleichgross
+## Namingconvention, Iteration x,y gleichgross, bei Geschwindigkeit = 0 Daten loeschen
 ##Ziele:
     ## Histogram geschwindigkeit -> done
     ## Heatmap geschwindigkeit -> done
@@ -25,7 +25,7 @@ from pandas import json_normalize
     ## Errechnete Leistung 
 
 ### Variable definition ###
-filename = "./gpxfiles/Greece.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./gpxfiles/Beten.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -92,8 +92,8 @@ def get_elevation_from_Api_post(lat, lon):
     lat_min = np.min(lat)
     lon_max = np.max(lon)
     lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 100)
-    latitudenvektor = np.linspace(lat_min, lat_max, 100)
+    longitudenvektor = np.linspace(lon_min, lon_max, 150)
+    latitudenvektor = np.linspace(lat_min, lat_max, 150)
 
     elevation_data = []
     lats_and_lons = []
@@ -148,6 +148,17 @@ velocities = 3.6*(Distance / np.diff(time_seconds))
 #Leistungen = Leistung_Geschaetzt(100, elevation)  ->> TODO
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
+maximum_velo = np.max(velocities)
+maximum_ele = np.max(ele)
+
+print("maximum elevation: ")
+print(maximum_ele)
+print("maximum speed: ")
+print(maximum_velo)
+print("average speed: ")
+print(average_velo)
+print("median speed: ")
+print(median_velo)
 
 ##################
 ### 3D-PRINTING###
@@ -161,7 +172,7 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     lon_flat = lon.flatten()
     lat_flat = lat.flatten()
     ele_flat = np.array(ele)
-    arraydata = np.column_stack((lon_flat, lat_flat, ele_flat))
+    arraydata = np.column_stack((lat_flat, lon_flat, ele_flat))
     pointcloud = pyvista.PolyData(arraydata)
     mesh = pointcloud.reconstruct_surface()
     mesh.save("exports/mesh.stl")
@@ -170,9 +181,10 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
 ###############
 ### plotten ###
 ###############
-
-plot_Data_Points(time_seconds, ele, "red", "exports/Elevation", "Zeit", "Elevation")
-plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "exports/slope", "Zeit", "Test") #TODO: Distance missing, right now only height change
+'''
+plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")
+plot_Data_Points(time_seconds, ele, "red", "exports/Elevation", "time", "Elevation")
+plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "exports/slope", "time", "Test") #TODO: Distance missing, right now only height change
 
 ###################################################
 ### plot map with track and elevation colorcode ###
@@ -197,7 +209,7 @@ plt.hist(velocities, 500)
 plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
-plt.xlim([0, 60])#plt.legend()
+plt.xlim([5, maximum_velo])#plt.legend()
 plt.savefig("exports/Histogram")
 plt.show()
 plt.close()
@@ -216,12 +228,12 @@ ax.add_feature(cfeature.COASTLINE, edgecolor='gray')
 ax.add_feature(cfeature.BORDERS, edgecolor='gray')
 ax.add_feature(cfeature.STATES, edgecolor='gray')
 sc = ax.scatter(long, lat, c=velocities,  cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
-sc.set_clim(0, 60)
+sc.set_clim(5, maximum_velo)
 cbar = plt.colorbar(sc, label=r'$Velocity$')
 plt.savefig("exports/Velocity")
 plt.show()
 plt.close()
-
+'''
 ##############################################################
 ### plot track in map colorcode for elevation and velocity ###
 ##############################################################
@@ -232,10 +244,11 @@ Meshing(lon_grid, lat_grid, Data_to_plot[2])
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'rainbow' )
-plt.scatter(long, lat, c = ele, cmap = 'hot' )
+ax = plt.scatter(long, lat, c = velocities, cmap = 'hot' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Height Profile")
+cbar = plt.colorbar(ax, label=r'$Velocity$')
 plt.savefig("exports/Height Profile")
 plt.show()
 plt.close()

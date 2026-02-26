@@ -25,7 +25,7 @@ from pandas import json_normalize
     ## Errechnete Leistung 
 
 ### Variable definition ###
-filename = "./gpxfiles/Beten.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -94,8 +94,8 @@ def get_elevation_from_Api_post(lat, lon):
     lat_min = np.min(lat)
     lon_max = np.max(lon)
     lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 150)
-    latitudenvektor = np.linspace(lat_min, lat_max, 150)
+    longitudenvektor = np.linspace(lon_min, lon_max, 1000)
+    latitudenvektor = np.linspace(lat_min, lat_max, 1000)
 
     elevation_data = []
     lats_and_lons = []
@@ -179,16 +179,16 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     arraydata = np.column_stack((lat_flat, lon_flat, ele_flat))
     pointcloud = pyvista.PolyData(arraydata)
     mesh = pointcloud.reconstruct_surface()
-    mesh.save("exports/mesh.stl")
+    mesh.save("export/mesh.stl")
 
 '''
 ###############
 ### plotten ###
 ###############
 '''
-plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")
-plot_Data_Points(time_seconds, ele, "red", "exports/Elevation", "time", "Elevation")
-plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "exports/slope", "time", "Test") #TODO: Distance missing, right now only height change
+plot_Data_Points(time_seconds[:-1], velocities, "red", "export/velocity", "time", "velocity")
+plot_Data_Points(time_seconds, ele, "red", "export/Elevation", "time", "Elevation")
+plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "export/slope", "time", "Test") #TODO: Distance missing, right now only height change
 
 ###################################################
 ### plot map with track and elevation colorcode ###
@@ -200,7 +200,7 @@ plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
 plt.colorbar(ax, label=r'$Elevation$')
-plt.savefig("exports/Track")
+plt.savefig("export/Track")
 plt.show()
 plt.close()
 
@@ -214,7 +214,7 @@ plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
 plt.xlim([5, maximum_velo])#plt.legend()
-plt.savefig("exports/Histogram")
+plt.savefig("export/Histogram")
 plt.show()
 plt.close()
 
@@ -234,10 +234,10 @@ ax.add_feature(cfeature.STATES, edgecolor='gray')
 sc = ax.scatter(long, lat, c=velocities,  cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
 sc.set_clim(5, maximum_velo)
 cbar = plt.colorbar(sc, label=r'$Velocity$')
-plt.savefig("exports/Velocity")
+plt.savefig("export/Velocity")
 plt.show()
 plt.close()
-'''
+
 ##############################################################
 ### plot track in map colorcode for elevation and velocity ###
 ##############################################################
@@ -253,8 +253,6 @@ plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Height Profile")
 cbar = plt.colorbar(ax, label=r'$Velocity$')
-plt.savefig("exports/Height Profile")
+plt.savefig("export/Height Profile")
 plt.show()
 plt.close()
-
-'''

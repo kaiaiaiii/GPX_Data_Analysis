@@ -94,8 +94,8 @@ def get_elevation_from_Api_post(lat, lon):
     lat_min = np.min(lat)
     lon_max = np.max(lon)
     lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 1000)
-    latitudenvektor = np.linspace(lat_min, lat_max, 1000)
+    longitudenvektor = np.linspace(lon_min, lon_max, 90)
+    latitudenvektor = np.linspace(lat_min, lat_max, 90)
 
     elevation_data = []
     lats_and_lons = []
@@ -213,7 +213,7 @@ plt.hist(velocities, 500)
 plt.xlabel("Velocity")
 plt.ylabel("frequency")
 plt.title("velocity over time")
-plt.xlim([5, maximum_velo])#plt.legend()
+plt.xlim([5, 2*average_velo])#plt.legend()
 plt.savefig("export/Histogram")
 plt.show()
 plt.close()

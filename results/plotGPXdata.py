@@ -13,9 +13,7 @@ def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
     plt.close()
 
 
-plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")
-plot_Data_Points(time_seconds, ele, "red", "exports/Elevation", "time", "Elevation")
-plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "exports/slope", "time", "Test") #TODO: Distance missing, right now only height change
+ #TODO: Distance missing, right now only height change
 
 ###################################################
 ### plot map with track and elevation colorcode ###

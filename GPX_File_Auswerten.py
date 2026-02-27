@@ -18,9 +18,9 @@ from pandas import json_normalize
 ## TODO:
 ## Namingconvention, Iteration x,y gleichgross, bei Geschwindigkeit = 0 Daten loeschen
 ##Ziele:
-    ## Histogram geschwindigkeit -> done
-    ## Heatmap geschwindigkeit -> done
-    ## Steigungen -> done
+    ## plausible maximalgeschwindigkeiten
+    ## Zeitangabe ordentlich
+    ## plots aufraumen
     ## trittfrequenz bei gegebener Uebersetzung -> Tacho wird gebraucht
     ## Errechnete Leistung 
 
@@ -195,7 +195,7 @@ plot_Data_Points(time_seconds[:-1], np.diff(ele), "green", "export/slope", "time
 ###################################################
 
 plt.figure(constrained_layout=True)
-ax = plt.scatter(long, lat, c = ele, cmap = 'hot' )
+ax = plt.scatter(long, lat, c = ele, s = 0.2, cmap = 'plasma' )
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Track")
@@ -231,8 +231,7 @@ ax.stock_img()
 ax.add_feature(cfeature.COASTLINE, edgecolor='gray')
 ax.add_feature(cfeature.BORDERS, edgecolor='gray')
 ax.add_feature(cfeature.STATES, edgecolor='gray')
-sc = ax.scatter(long, lat, c=velocities,  cmap='viridis', alpha=0.5, transform=ccrs.PlateCarree())
-sc.set_clim(5, maximum_velo)
+sc = ax.scatter(long, lat, c=velocities,  cmap='plasma', s=0.2, transform=ccrs.PlateCarree(), vmax= 2*average_velo, vmin=5)
 cbar = plt.colorbar(sc, label=r'$Velocity$')
 plt.savefig("export/Velocity")
 plt.show()
@@ -248,7 +247,7 @@ Meshing(lon_grid, lat_grid, Data_to_plot[2])
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 plt.scatter(lon_grid, lat_grid, c = Data_to_plot[2] , cmap = 'rainbow' )
-ax = plt.scatter(long, lat, c = velocities, cmap = 'hot' )
+ax = plt.scatter(long, lat, c = velocities, s = 0.1, cmap = 'plasma' , vmax= 2*average_velo, vmin=5)
 plt.xlabel("longitude")
 plt.ylabel("latitude")
 plt.title("Height Profile")

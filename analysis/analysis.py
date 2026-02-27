@@ -109,7 +109,6 @@ def data_cleansing(longitude, latitude, elevation, time):
     return long, lat, ele, time_seconds
 
 def data_calculations(longitude, latitude, elevation, time_seconds):
-    delta_t = np.diff(time_seconds)
     Distance = distance_between_coordinates(longitude, latitude, elevation)
     velocities = 3.6*(Distance / np.diff(time_seconds))
     #Power = estimated_Performance(100, elevation)  ->> TODO

@@ -1,5 +1,6 @@
 .venv
 .venvwin
+.vscode
 *.*
 *.png
 *.gpx
@@ -9,4 +10,4 @@ Beten.gpx
 Franken.gpx
 DK.gpx
 Walberla.gpx
-:Zone.Identifier
+*:Zone.Identifier

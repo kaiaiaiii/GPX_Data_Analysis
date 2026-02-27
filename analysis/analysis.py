@@ -21,6 +21,7 @@ def read_from_file(filename):
             latitude.extend(re.findall(pattern_latitude, line))
             elevation.extend(re.findall(pattern_elevation, line))
             time.extend(re.findall(pattern_time, line))
+
     return longitude, latitude, elevation, time
 
 def estimated_Performance(mass, velocity, elevation1, elevation2):
@@ -101,7 +102,6 @@ def data_cleansing(longitude, latitude, elevation, time):
     ele = list(map(float, elevation))
     lat = list(map(float, latitude))
     long = list(map(float, longitude))
-
     time_seconds = np.array([
         datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp()
         for t in time
@@ -127,7 +127,8 @@ def data_calculations(longitude, latitude, elevation, time_seconds):
     return velocities, median_velo, average_velo, maximum_velo, maximum_ele
 
 def data_analysis(filename):
-    longitude, latitude, elevation_along_path, time_seconds = data_cleansing(read_from_file(filename))
+    long, lat, ele, time = read_from_file(filename)
+    longitude, latitude, elevation_along_path, time_seconds = data_cleansing(long, lat, ele, time)
     velocities, median_velo, average_velo, maximum_velo, maximum_ele = data_calculations(longitude, latitude, elevation, time_seconds)
     longitude_vector, latitude_vector, elevation_map = get_elevation_from_Api_post(longitude, latitude)
     return longitude_vector, latitude_vector, elevation_along_path, elevation_map, time_seconds

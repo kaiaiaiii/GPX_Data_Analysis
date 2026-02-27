@@ -19,7 +19,7 @@ def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
 ### plot map with track and elevation colorcode ###
 ###################################################
 
-def plot_scatter(x, y, z)
+def plot_scatter(x, y, z):
     plt.figure(constrained_layout=True)
     ax = plt.scatter(x, y, c = z, cmap = 'hot' )
     plt.xlabel("longitude")
@@ -30,7 +30,7 @@ def plot_scatter(x, y, z)
     plt.show()
     plt.close()
 
-
+'''
 plt.figure(constrained_layout=True)
 ax = plt.scatter(long, lat, c = ele, s = 0.2, cmap = 'plasma' )
 plt.xlabel("longitude")
@@ -92,3 +92,4 @@ cbar = plt.colorbar(ax, label=r'$Velocity$')
 plt.savefig("export/Height Profile")
 plt.show()
 plt.close()
+'''

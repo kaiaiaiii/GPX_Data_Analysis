@@ -1,12 +1,12 @@
-from results.plotGPXdata.py import plot_Data_Points
-from analysis.analysis.py import data_analysis
-from STLgenerator/STLgenerator.py import Meshing
+from results.plotGPXdata import plot_Data_Points
+from analysis.analysis import data_analysis
+from STLgenerator.STLgenerator import Meshing
 from tkinter.filedialog import askopenfilename
 import numpy as np
 import math
 
 
-filename = "./gpxfiles/Beten.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "FileName.gpx" #askopenfilename() ## mal relativer pfadname
 longitude_vector, latitude_vector, elevation_path, elevation_map, time_seconds = data_analysis(filename)
 
 plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")

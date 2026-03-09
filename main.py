@@ -6,7 +6,7 @@ import numpy as np
 import math
 
 
-filename = "FileName.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
 longitude_vector, latitude_vector, elevation_path, elevation_map, time_seconds = data_analysis(filename)
 
 plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")

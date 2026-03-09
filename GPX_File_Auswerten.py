@@ -25,7 +25,7 @@ from pandas import json_normalize
     ## Errechnete Leistung 
 
 ### Variable definition ###
-filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./FileName2.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -55,7 +55,7 @@ def plot_Data_Points(x, y, color, Name, xlabel, ylabel):
     plt.show()
     plt.close()
 
-def estimated_Performance(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
+def estimated_Performance(Gewicht, Geschwindigkeit, dHoehe):
     my_r =0.00404 ## Leifiphysik schaetzung
     rho = 1.2
     cwA = 0.28 
@@ -63,8 +63,8 @@ def estimated_Performance(Gewicht, Geschwindigkeit, Hoehe1, Hoehe2):
     Leistung_Rollwiderstand.append(P_Rolle)
     P_Luft = 0.5*rho*cwA*Geschwindigkeit*Geschwindigkeit
     Leistung_Luftwiderstand.append(P_Luft)
-    k = Hoehe2-Hoehe1
-    P_Steigung = (k*Geschwindigkeit)/(math.sqrt(1+k*k))
+    k = dHoehe
+    P_Steigung = (k*Geschwindigkeit)/(math.sqrt(1+ k*k))
     Leistung_Steigung.append(P_Steigung)
     Leistung = Leistung_Luftwiderstand + Leistung_Rollwiderstand + Leistung_Steigung
     return Leistung  
@@ -141,15 +141,15 @@ ele = list(map(float, elevation))
 lat = list(map(float, latitude))
 long = list(map(float, longitude))
 
-time_seconds = np.array([
-    datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp()
+time_seconds = np.array([datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp()-datetime.strptime(time[0], "%Y-%m-%dT%H:%M:%S.%f").timestamp()
     for t in time
 ])
+
 
 delta_t = np.diff(time_seconds)
 Distance = distance(lat, long, ele)
 velocities = 3.6*(Distance / np.diff(time_seconds))
-#Leistungen = Leistung_Geschaetzt(100, elevation)  ->> TODO
+#Leistungen = estimated_Performance(100, velocities, np.diff(ele)) 
 median_velo = np.median(velocities)
 average_velo = np.average(velocities)
 maximum_velo = np.max(velocities)

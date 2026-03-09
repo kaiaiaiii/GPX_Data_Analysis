@@ -9,6 +9,6 @@ import math
 filename = "./FileName.gpx" #askopenfilename()
 longitude_vector, latitude_vector, elevation_path, elevation_map, time_seconds = data_analysis(filename)
 
-plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")
+#plot_Data_Points(time_seconds[:-1], velocities, "red", "exports/velocity", "time", "velocity")
 plot_Data_Points(time_seconds, elevation_map, "red", "exports/Elevation", "time", "Elevation")
 plot_Data_Points(time_seconds[:-1], np.diff(elevation_path), "green", "exports/slope", "time", "Test")

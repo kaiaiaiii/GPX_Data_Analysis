@@ -26,7 +26,7 @@ from pandas import json_normalize
     ## missing data points elemination
 
 ### Variable definition ###
-filename = "./FileName.gpx" #askopenfilename() ## mal relativer pfadname
+filename = "./FileName2.gpx" #askopenfilename() ## mal relativer pfadname
 latitude, longitude, elevation, time, velocity = [], [], [], [], []
 Leistung_Rollwiderstand, Leistung_Luftwiderstand, Leistung_Steigung = [],[],[]
 velocity = []
@@ -146,6 +146,9 @@ time_seconds = np.array([datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp(
     for t in time
 ])
 
+time_plot = np.array([datetime.strftime(t, "%Y-%m-%dT%H:%M:%S.%f")
+    for t in time
+])
 
 delta_t = np.diff(time_seconds)
 Distance = distance(lat, long, ele)
@@ -262,9 +265,9 @@ plt.close()
 ##############################################################
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
-ax = plt.scatter(time_seconds[:-1], ele[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)
+ax = plt.scatter(time_plot[:-1], ele[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)
 plt.xlabel("time")
-plt.ylabel("elevatio")
+plt.ylabel("elevation")
 plt.title("Height Profile")
 plt.savefig("export/Height_Velo")
 cbar = plt.colorbar(ax, label=r'$Velocity$')

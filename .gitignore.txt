@@ -4,6 +4,7 @@
 *.*
 *.png
 *.gpx
+*.pyc
 *.stl
 Greece.gpx
 Beten.gpx
@@ -11,3 +12,4 @@ Franken.gpx
 DK.gpx
 Walberla.gpx
 *:Zone.Identifier
+__pycache__

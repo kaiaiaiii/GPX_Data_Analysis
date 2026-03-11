@@ -1,24 +1,36 @@
 #######################################
 ### file to analyse my cadence data ###
 #######################################
+import matplotlib.pyplot as plt
+datavector, time, cadence = [], [], []
 
-datavector,time_between_rotation = [], []
+def cadence_from_data(filename):
+    with open(filename) as file:
+        for line in file:
+            datavector.append(line)
+        pps = int(datavector[0]) #input frequency in pulses per second
+        datavector.pop(0)
 
+    counter = 0
+    elapsed_time = 0 
+    for number in map(int, datavector[0]):
+        if number == 0:
+            counter += 1
+            elapsed_time += 1
+        elif number == 1:
+            elapsed_time += 1
+            cadence.append(pps*(counter+1))
+            time.append(pps*elapsed_time)
+            counter = 0
+    return cadence, time
+        
 
-with open("../inputdata/CadenceData.txt") as file:
-    for line in file:
-        datavector.append(line)
-
-    ppm = int(datavector[0])
-    datavector.pop(0)
-
-dataset = list(map(int, datavector))
-
-for i in range(len(dataset)):
-    if int(dataset[i]) == 0:
-        counter += 1
-        print("test")
-    elif dataset[i] == 1:
-        time_between_rotation.append(20*counter+1)
-        counter = 0
-    print(time_between_rotation)
+plt.figure(figsize=(8, 5))
+plt.plot(time, cadence, label="Test")
+plt.xlabel("time")
+plt.ylabel("cadence")
+plt.title("Name")
+plt.legend()
+plt.savefig("cadenceplot")
+plt.show()
+plt.close()

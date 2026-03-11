@@ -12,6 +12,32 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     mesh = pointcloud.reconstruct_surface().triangulate()
     mesh.save("exports/mesh.stl")
 
+
+def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0, base_height, model_size_mm):
+    height = base_height
+    size_max = model_size_mm
+    lon = np.array(lon)
+    lat = np.array(lat)
+    ele = np.array(ele).reshape(lon.shape) * z_scale
+    rows, cols = ele.shape
+    n_faces = (rows - 1) * (cols - 1) * 2
+    terrain_mesh = mesh.Mesh(np.zeros(n_faces, dtype=mesh.Mesh.dtype))
+    face = 0
+    for i in range(rows - 1):
+        for j in range(cols - 1):
+            p1 = [lon[i,j],   lat[i,j],   ele[i,j]]
+            p2 = [lon[i+1,j], lat[i+1,j], ele[i+1,j]]
+            p3 = [lon[i,j+1], lat[i,j+1], ele[i,j+1]]
+            p4 = [lon[i+1,j+1], lat[i+1,j+1], ele[i+1,j+1]]
+            terrain_mesh.vectors[face] = np.array([p1, p2, p3])
+            face += 1
+            terrain_mesh.vectors[face] = np.array([p2, p4, p3])
+            face += 1
+
+    terrain_mesh.save(filename)
+    print("Triangles:", n_faces)
+
+    
 '''
 def ShowStlFile(filename):
     mesh = o3d.io.read_triangle_mesh(filename)

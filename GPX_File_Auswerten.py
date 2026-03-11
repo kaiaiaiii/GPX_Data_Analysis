@@ -187,9 +187,9 @@ def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
     surface.plot()
 
 
-def terrain_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0, base_height, model_size_mm):
-    height = base_height
-    size_max = model_size_mm
+def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0): #, base_height, model_size_mm):
+    #height = base_height
+    #size_max = model_size_mm
     lon = np.array(lon)
     lat = np.array(lat)
     ele = np.array(ele).reshape(lon.shape) * z_scale
@@ -292,7 +292,7 @@ plt.close()
 Data_to_plot = get_elevation_from_Api_post(lat, long) 
 lon_grid, lat_grid = np.meshgrid(Data_to_plot[0], Data_to_plot[1])
 Meshing(lat_grid, lon_grid, Data_to_plot[2])
-terrain_to_stl(lat_grid, lon_grid, Data_to_plot[2])
+data_to_stl(lat_grid, lon_grid, Data_to_plot[2])
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 ax = plt.scatter(time_seconds[:-1], ele[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)

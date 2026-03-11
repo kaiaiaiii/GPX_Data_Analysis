@@ -1,6 +1,7 @@
 import re
 import matplotlib.pyplot as plt
 import tkinter as tk
+from stl import mesh
 import math
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
@@ -146,9 +147,9 @@ time_seconds = np.array([datetime.strptime(t, "%Y-%m-%dT%H:%M:%S.%f").timestamp(
     for t in time
 ])
 
-time_plot = np.array([datetime.strftime(t, "%Y-%m-%dT%H:%M:%S.%f")
-    for t in time
-])
+#time_plot = np.array([datetime.strftime(t, "%Y-%m-%dT%H:%M:%S.%f")
+ #   for t in time
+#])
 
 delta_t = np.diff(time_seconds)
 Distance = distance(lat, long, ele)
@@ -177,13 +178,38 @@ print(median_velo)
 #own implementation, looking for libraries later
 
 def Meshing(lon, lat, ele): ## TODO: Muss noch funktionieren
-    lon_flat = lon.flatten()
-    lat_flat = lat.flatten()
-    ele_flat = np.array(ele)
-    arraydata = np.column_stack((lat_flat, lon_flat, ele_flat))
-    pointcloud = pyvista.PolyData(arraydata)
-    mesh = pointcloud.reconstruct_surface()
-    mesh.save("export/mesh.stl")
+    lon_flat = np.array(lon)
+    lat_flat = np.array(lat)
+    ele_flat = np.array(ele).reshape(lon.shape)
+    grid = pyvista.StructuredGrid(lon_flat, lat_flat, ele_flat)
+    surface = grid.extract_surface(algorithm="dataset_surface").triangulate()
+    surface.save("export/mesh.stl")
+    surface.plot()
+
+
+def terrain_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0, base_height, model_size_mm):
+    height = base_height
+    size_max = model_size_mm
+    lon = np.array(lon)
+    lat = np.array(lat)
+    ele = np.array(ele).reshape(lon.shape) * z_scale
+    rows, cols = ele.shape
+    n_faces = (rows - 1) * (cols - 1) * 2
+    terrain_mesh = mesh.Mesh(np.zeros(n_faces, dtype=mesh.Mesh.dtype))
+    face = 0
+    for i in range(rows - 1):
+        for j in range(cols - 1):
+            p1 = [lon[i,j],   lat[i,j],   ele[i,j]]
+            p2 = [lon[i+1,j], lat[i+1,j], ele[i+1,j]]
+            p3 = [lon[i,j+1], lat[i,j+1], ele[i,j+1]]
+            p4 = [lon[i+1,j+1], lat[i+1,j+1], ele[i+1,j+1]]
+            terrain_mesh.vectors[face] = np.array([p1, p2, p3])
+            face += 1
+            terrain_mesh.vectors[face] = np.array([p2, p4, p3])
+            face += 1
+
+    terrain_mesh.save(filename)
+    print("Triangles:", n_faces)
 
 '''
 ###############
@@ -263,9 +289,13 @@ plt.close()
 ##############################################################
 ### plot track in elevation profile colorcode for velocity ###
 ##############################################################
+Data_to_plot = get_elevation_from_Api_post(lat, long) 
+lon_grid, lat_grid = np.meshgrid(Data_to_plot[0], Data_to_plot[1])
+Meshing(lat_grid, lon_grid, Data_to_plot[2])
+terrain_to_stl(lat_grid, lon_grid, Data_to_plot[2])
 
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
-ax = plt.scatter(time_plot[:-1], ele[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)
+ax = plt.scatter(time_seconds[:-1], ele[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)
 plt.xlabel("time")
 plt.ylabel("elevation")
 plt.title("Height Profile")

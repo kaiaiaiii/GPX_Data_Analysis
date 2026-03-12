@@ -1,6 +1,5 @@
 import numpy as np
 import pyvista
-import open3d as o3d
 from stl import mesh
 
 def Meshing(lon, lat, ele):
@@ -11,15 +10,13 @@ def Meshing(lon, lat, ele):
     pointcloud = pyvista.PolyData(arraydata,  faces=arraydata.GetPolys())
     pointcloud.plot(style = "points", pointsize = 10.0) ## 
     mesh = pointcloud.reconstruct_surface().triangulate()
-    mesh.save("exports/mesh.stl")
+    mesh.save("export/mesh.stl")
 
-
-def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0, base_height, model_size_mm):
-    height = base_height
-    size_max = model_size_mm
-    lon = np.array(lon)
-    lat = np.array(lat)
-    ele = np.array(ele).reshape(lon.shape) * z_scale
+'''
+def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=10.005): #, base_height, model_size_mm):
+    lon_flat = lon.flatten()
+    lat_flat = lat.flatten()
+    ele_flat = np.array(ele).flatten()* z_scale
     rows, cols = ele.shape
     n_faces = (rows - 1) * (cols - 1) * 2
     terrain_mesh = mesh.Mesh(np.zeros(n_faces, dtype=mesh.Mesh.dtype))
@@ -38,7 +35,7 @@ def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=1.0, base_
     terrain_mesh.save(filename)
     print("Triangles:", n_faces)
 
-
+'''
 '''
 def ShowStlFile(filename):
     mesh = o3d.io.read_triangle_mesh(filename)

@@ -96,8 +96,8 @@ def get_elevation_from_Api_post(lat, lon):
     lat_min = np.min(lat)
     lon_max = np.max(lon)
     lon_min = np.min(lon) 
-    longitudenvektor = np.linspace(lon_min, lon_max, 90)
-    latitudenvektor = np.linspace(lat_min, lat_max, 90)
+    longitudenvektor = np.linspace(lon_min, lon_max, 50)
+    latitudenvektor = np.linspace(lat_min, lat_max, 50)
 
     elevation_data = []
     lats_and_lons = []
@@ -180,7 +180,7 @@ print(median_velo)
 def Meshing(lon, lat, ele):
     lon_flat = lon.flatten()
     lat_flat = lat.flatten()
-    ele_flat = np.array(ele).flatten()
+    ele_flat = (np.array(ele).flatten())*0.0005
     arraydata = np.column_stack((lat_flat, lon_flat, ele_flat))
     pointcloud = pyvista.PolyData(arraydata)
     pointcloud.plot(style = "points", point_size = 10.0) ## 

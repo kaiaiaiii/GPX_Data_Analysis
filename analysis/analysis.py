@@ -1,6 +1,6 @@
 import re
 import math
-from APIrequest import get_elevation_from_Api_post
+from analysis.APIrequest import get_elevation_from_Api_post
 from datetime import datetime
 import numpy as np
 from requests import post
@@ -86,6 +86,6 @@ def data_calculations(longitude, latitude, elevation, time_seconds):
 def data_analysis(filename):
     long, lat, ele, time = read_from_file(filename)
     longitude, latitude, elevation_along_path, time_seconds = data_cleansing(long, lat, ele, time)
-    velocities, median_velo, average_velo, maximum_velo, maximum_ele = data_calculations(longitude, latitude, elevation, time_seconds)
+    velocities, median_velo, average_velo, maximum_velo, maximum_ele = data_calculations(longitude, latitude, elevation_along_path, time_seconds)
     longitude_vector, latitude_vector, elevation_map = get_elevation_from_Api_post(longitude, latitude)
-    return longitude_vector, latitude_vector, elevation_along_path, elevation_map, time_seconds
+    return longitude_vector, latitude_vector, elevation_along_path, elevation_map

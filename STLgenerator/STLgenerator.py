@@ -5,12 +5,13 @@ from stl import mesh
 def Meshing(lon, lat, ele):
     lon_flat = lon.flatten()
     lat_flat = lat.flatten()
-    ele_flat = np.array(ele).flatten()
+    ele_flat = (np.array(ele).flatten())*0.0005
     arraydata = np.column_stack((lat_flat, lon_flat, ele_flat))
-    pointcloud = pyvista.PolyData(arraydata,  faces=arraydata.GetPolys())
-    pointcloud.plot(style = "points", pointsize = 10.0) ## 
+    pointcloud = pyvista.PolyData(arraydata)
+    pointcloud.plot(style = "points", point_size = 10.0) ## 
     mesh = pointcloud.reconstruct_surface().triangulate()
-    mesh.save("export/mesh.stl")
+    mesh.save("exports/mesh.stl")
+
 
 '''
 def data_to_stl(lon, lat, ele, filename="export/terrain.stl", z_scale=10.005): #, base_height, model_size_mm):

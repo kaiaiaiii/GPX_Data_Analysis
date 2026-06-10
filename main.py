@@ -1,8 +1,8 @@
 from results.plotGPXdata import plot_Data_Points
 from analysis.analysis import read_from_file, data_cleansing, data_calculations
-from analysis.multipleFiles import multiple_file_analysis
+#from analysis.multipleFiles import multiple_file_analysis TODO
 from analysis.APIrequest import get_elevation_from_Api_post
-from analysis.cadence import cadence_from_data
+#from analysis.cadence import cadence_from_data TODO
 from STLgenerator.STLgenerator import Meshing
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 ##TODO##
 ##Multiple files, gui, stl, progression analysis
 
-gpxfilename = "./inputdata/FileName.gpx" #askopenfilename()
-cadencefilename = "./inputdata/CadenceData.txt" #askopenfilename()
+gpxfilename = "./inputdata/GPX_Files/Jule_Reise/2026-05-05_2935609348_Gravel-Fahrt.gpx" #askopenfilename()
+#cadencefilename = "./inputdata/CadenceData.txt" #askopenfilename()TODO
 datafolder = "./inputdata/data"
 
 #########################
@@ -31,7 +31,7 @@ lon_grid, lat_grid = np.meshgrid(longitude_vector, latitude_vector)
 ### Bike Parameter Analysis ###
 ###############################
 
-cadence_from_data(cadencefilename)
+#cadence_from_data(cadencefilename)
 
 ###################
 ### 3D-Printing ###
@@ -47,7 +47,7 @@ Meshing(lon_grid, lat_grid, elevation_map)
 plot_Data_Points(time_seconds[:-1], velocities, "red", "export/velocity", "time", "velocity")
 plot_Data_Points(time_seconds, elevation_along_path, "red", "export/Elevation", "time", "Elevation")
 plot_Data_Points(time_seconds[:-1], np.diff(elevation_along_path), "green", "export/slope", "time", "Test")
-plot_Data_Points(time_seconds, rolling_avg_velo, "red", "export/Elevation", "time", "Elevation")
+#plot_Data_Points(time_seconds, rolling_avg_velo, "red", "export/Elevation", "time", "Elevation") TODO
 
 plt.figure(constrained_layout=True)
 ax = plt.scatter(longitude, latitude, c = elevation_along_path, s = 0.2, cmap = 'plasma' )
@@ -100,6 +100,8 @@ plt.savefig("export/Height Profile")
 plt.show()
 plt.close()
 
+
+'''
 plt.figure(figsize=(8, 5)) # TODO: Automatic width and height
 ax = plt.scatter(time_seconds[:-1], elevation_along_path[:-1], c = velocities, s = 0.2, cmap = 'plasma' , vmax= 3*median_velo, vmin=0)
 plt.xlabel("time")
@@ -109,3 +111,4 @@ plt.savefig("export/Height_Velo")
 cbar = plt.colorbar(ax, label=r'$Velocity$')
 plt.show()
 plt.close()
+'''

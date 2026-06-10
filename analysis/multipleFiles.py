@@ -1,6 +1,7 @@
 import os
+import fnmatch
 from results.plotGPXdata import plot_Data_Points
-from analysis import read_from_file, data_cleansing, data_calculations
+from analysis.analysis import read_from_file, data_cleansing, data_calculations
 from APIrequest import get_elevation_from_Api_post
 from tkinter import filedialog
 
@@ -22,3 +23,6 @@ def get_data_from_all_files(file_list):
 
 def multiple_file_analysis():
     folder_path = filedialog.askdirectory()
+    number_of_files = fnmatch.filter(os.listdir(folder_path), '*.gpx') 
+    for i in range(number_of_files):
+         

@@ -3,7 +3,7 @@
 .vscode
 *.*
 *.png
-*.gpx
+*.gpx                                       
 *.pyc
 *.stl
 Greece.gpx
